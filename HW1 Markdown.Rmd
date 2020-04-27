@@ -1,0 +1,131 @@
+---
+title: "HW 1 Markdown"
+author: "Josh VandenBerg"
+date: "3/24/2020"
+output: pdf_document
+---
+
+Hiding Results
+```{r}
+knitr::opts_chunk$set(results = "hide")
+```
+Loading in the data and making an id for the data
+```{r}
+mydat <- iris
+mydat$id <- 1:nrow(mydat)
+```
+
+**Question #1:**
+Sum of all the numeric values in row 2, change the first number to get whatever row you want
+
+```{r}
+sum(mydat[2,1:4])
+```
+
+**Question #2:**
+for loop sums for each row
+```{r}
+sums <- vector(mode="numeric")
+for (i in 1:150){
+  sums[i] <- sum(mydat[i,1:4])}
+  print(sums)
+```
+**Question #3:**
+apply sum for each row
+```{r}
+appsums <- apply(mydat[,1:4],1,sum)
+appsums
+```
+**Question #4:** sapply sums for each row
+```{r}
+sapsums <- (sapply(1:150, function(x) sum(mydat[x,1:4])))
+sapsums
+```
+**Question #5:** This library is needed for the function melt()
+```{r}
+library(reshape2)
+```
+
+```{r}
+mydat2 <- melt(mydat, id.vars=5:6,variable.name = "measures",value.name = "values")
+head(mydat2)
+```
+**Question #8:** Means value for each Species group
+```{r}
+means <- aggregate(values~Species,mydat2,mean)
+means
+```
+Combining the means with the other data
+```{r}
+newdat <- merge(mydat2,means,by="Species")
+names(newdat)[4] <- "values"
+names(newdat)[5] <- "Avg"
+head(newdat)
+```
+
+**Question #9:** Converting back to wide from long
+```{r}
+findat <- dcast(newdat, id+Species+Avg~measures,value.var="values")
+head(findat)
+```
+
+**Question #10**
+
+**1997 data**
+```{r}
+y1997 <- read.fwf(file = "/Users/joshuavandenberg/Documents/Data Manage/saipe/est97-ia.dat",widths = c(2,4,9,9,9,5,5,5,9,9,9,5,5,5,9,9,9,5,5,5,7,7,7,8,8,8,5,5,5,22,10))
+names(y1997) <- c("StateCode","County","Totpov","lb90","ub90","perpov","lb90per","ub90per","tot17","lb17","ub17","per17","lb17per","ub17per","tot517","lb517","ub517","per517","lb517per","ub517per","medinc","lbinc","ubinc","tot05","lb05","ub05","per05","lb05per","ub05per","County","PS")
+```
+Deleting unneeded columns
+```{r}
+y1997 <- subset(y1997, select = -c(StateCode,tot05,lb05,ub05,per05,lb05per,ub05per,PS,lb90,lb90per,ub90per,lb17,lb17per,ub17per,lb517,lb517per,ub517per,medinc,lbinc,ubinc))
+```
+Making Year and Margin of Error columns
+```{r}
+y1997$year <- 1997
+y1997$totmoe <- y1997$ub90-y1997$Totpov
+y1997$moe17 <- y1997$ub17-y1997$tot17
+y1997$moe517 <- y1997$ub517-y1997$tot517
+```
+Deleting the other unneeded columns that were used to make MOE columns
+```{r}
+y1997 <- subset(y1997, select = -c(ub90,ub17,ub517))
+```
+Repositioning data
+```{r}
+y1997 <- y1997[,c("year","County","County.1","Totpov","perpov","totmoe","tot17","per17","moe17","tot517","per517","moe517")]
+```
+**Year 2018**
+```{r}
+y2018 <- read.fwf(file = "/Users/joshuavandenberg/Documents/Data Manage/saipe/est18-ia.txt",widths = c(2,4,9,9,9,5,5,5,9,9,9,5,5,5,9,9,9,5,5,5,7,7,7,8,8,8,5,5,5,22,3))
+names(y2018) <- c("StateCode","County","Totpov","lb90","ub90","perpov","lb90per","ub90per","tot17","lb17","ub17","per17","lb17per","ub17per","tot517","lb517","ub517","per517","lb517per","ub517per","medinc","lbinc","ubinc","tot05","lb05","ub05","per05","lb05per","ub05per","County","PS")
+```
+Deleting unneeded columns
+```{r}
+y2018 <- subset(y2018, select = -c(StateCode,tot05,lb05,ub05,per05,lb05per,ub05per,PS,lb90,lb90per,ub90per,lb17,lb17per,ub17per,lb517,lb517per,ub517per,medinc,lbinc,ubinc))
+```
+Creating year and margin of error columns
+```{r}
+y2018$year <- 2018
+y2018$totmoe <- y2018$ub90-y2018$Totpov
+y2018$moe17 <- y2018$ub17-y2018$tot17
+y2018$moe517 <- y2018$ub517-y2018$tot517
+```
+Deleting final uneeded columns that were used to create MOE
+```{r}
+y2018 <- subset(y2018, select = -c(ub90,ub17,ub517))
+```
+Repositiong data
+```{r}
+y2018 <- y2018[,c("year","County","County.1","Totpov","perpov","totmoe","tot17","per17","moe17","tot517","per517","moe517")]
+```
+Combine 1997 and 2018 data
+```{r}
+comb <- rbind(y1997,y2018)
+options(max.print = 999999)
+head(comb)
+```
+Make it a csv
+```{r}
+write.csv(comb,"/Users/joshuavandenberg/Documents/Data Manage/HW1")
+```
