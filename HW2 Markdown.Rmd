@@ -1,0 +1,113 @@
+---
+title: "HW2 Markdown"
+author: "Josh VandenBerg"
+date: "3/24/2020"
+output: html_document
+---
+Hiding Results
+```{r}
+knitr::opts_chunk$set(results = "hide")
+```
+#### Question 1
+```{r}
+messy <- read.csv("/Users/joshuavandenberg/Documents/Data Manage/messy data")
+```
+This data is messy because there is a lot of missing values, even in some of the names.
+I sure hope that one is in pounds otherwise he weighs over 700 pounds. We don't know what the Q's are. All have missing values. Q2 only has one entry. Q3 has lowercase and capitalized n and y. Only two of the entries have comments. Capitalization is messy throughout.
+
+#### Question 2
+```{r}
+duplicated(messy[,1:2])
+```
+This code detects that Lucy is in the data twice. But, it is from different ages.
+So, I beleive both entries should stay in the data.
+There is a name "Harry wedel" "Wedel" which we do not want the wedel in the first name.
+
+#### Question 3
+```{r}
+extracomments <- read.csv("/Users/joshuavandenberg/Documents/Data Manage/extra comments.csv", stringsAsFactors = FALSE)
+index <- match(messy$Last,extracomments$Last)
+com <- grepl("[[:digit:]]",index)
+```
+Add a column in the messy data with the extracomments corresponding to the correct row.
+```{r}
+messy$extra <- ifelse(com,extracomments$comments,"no comment")
+```
+
+#### Question 4
+Making all positives "Y" and negatives "N" in the Q3 column.
+```{r}
+messy$Q3 <- sub("y","Y",messy$Q3)
+messy$Q3 <- sub("Yes","Y",messy$Q3)
+messy$Q3 <- sub("n","N",messy$Q3)
+```
+
+#### Question 5
+Erasing names after a hyphen in the Lastname colummn.
+```{r}
+messy$Last <- gsub("-","",messy$Last)
+```
+
+#### Question 6
+Split the weight column by the decimal and put into dataframe.
+```{r}
+split <- strsplit(as.character(messy$weight),"\\.")
+x <- data.frame(split, stringsAsFactors = FALSE)
+```
+If the weight was a whole number, it would come out as "84" "84", instead of "84""0".
+This will make the second column zero if it is the same as the first.
+```{r}
+zeroes <- grepl("X", names(x))
+x[2,zeroes] <- 0
+```
+Moving the numbers of the weight back into the messy column.
+```{r}
+messy$whole <- unlist(x[1,])
+messy$dec <- unlist(x[2,])
+```
+
+#### Question 7
+```{r}
+library(Hmisc)
+```
+Fix the capitilzation for names.
+```{r}
+messy$First <- tolower(messy$First)
+messy$First <- capitalize(messy$First)
+messy$Last <- tolower(messy$Last)
+messy$Last <- capitalize(messy$Last)
+```
+Delete the Q2 column since there was only one entry. Also, delete all the rows with missing values in either Q1 or Q3.
+```{r}
+messy <- subset(messy, select = -c(Q2))
+messy <- messy[complete.cases(messy[,5:6]),]
+```
+
+#### Question 8
+I was unable to get this to work properly, but I was trying to read in the layout for each year. In each year, I tried to get it the code to get the last number of the column range for each variable. With that, I could subtract that number with the one after that to get the distance apart, which would be the widths. After that I could find the corresponding data for a certain year, and r would be able to read it in. Then, I could combine all the data and clean it up to look similiar to what we did in HW 1.
+```{r}
+setwd("/Users/joshuavandenberg/Documents/Data Manage/saipe")
+files <- dir(pattern = "layout.txt")
+datafiles <- dir(pattern = "ia.txt")
+for(i in 1:length(files)){
+  file <- files[i]
+  yr <- regmatches(file, regexpr("[0-9].*[0-9]", file))
+  layout <- paste(yr, "-estimate-layout.txt",sep="")
+  layoutfile <- readLines(layout)
+  three <- grep("III", layoutfile)
+  three <- as.numeric(three)
+  vec <- as.vector(layoutfile)
+  vec <- vec[three:length(vec)]
+  newvec <- grep("[[:digit:]]",value=TRUE, vec)
+  newvec <- as.vector(newvec)
+  newvec <- substr(newvec,11,13)
+  newvec <- grep("[[:digit:]]", value = TRUE, newvec)
+  newvec <- as.numeric(newvec)
+  finalvec <- vector()
+  for(i in 1:length(newvec)){
+    finalvec <- newvec[i+1]-newvec[i] 
+  }
+   #read.fwf(file = datafiles[i],widths = finalvec)
+}
+```
+
