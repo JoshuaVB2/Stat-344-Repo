@@ -11,7 +11,7 @@ Hiding Results
 #### Question 1
 ```{r}
 library(ggplot2)
-wins <- c(75,37,37,33,29,5)
+wins <- c(51,37,37,33,29,17)
 team <- c("Min","Cle","Mil","STL","Chi","Pitt")
 barplot(wins, names.arg = team, col = rainbow(6), xlab = "Team",ylab = "Wins")
 ```
