@@ -1,0 +1,91 @@
+---
+title: "HW4 Markdown"
+author: "Josh VandenBerg"
+date: "4/3/2020"
+output: html_document
+---
+Hiding Results
+```{r}
+knitr::opts_chunk$set(results = "hide")
+```
+#### Question 1
+We can see that Oceania and Europe have a higher GDP on average, while Africa is quite low. The middle 50% of Europe is wide spread, while Africa and the America's middle 50% is condensed. Asia is interesting in that the second quantile is small while the third quantile is large. Africa, Americas, and Asia have an outliers, while Oceania only has one. Comparing the boxplots can help us find similarities and differences between the continents. The boxplots give summaries so that we can determine if there are big enough differences to be of statistical significance.
+
+#### Question 2
+Bar plots are really good at condensing all those categories into fewer categories to look at. In the example, we could see the mean GDP is different in some of the continents. Looking at the dot plot, it would have been extremely hard to see that. Bar plots are better at generalizing and using mean, medians, or other numerical summareis to compare for different categories.
+
+#### Question 3
+Stripplot help to see the sprad and distibution of the data. Maybe the second quantile and third quantild are spread out, but when you look at the stripplot there is just one data point on the one ennd, while there is a big clump on the other end. Therefore, this half of the box looks really big even though they are all basically at the same place. A boxplot would not be able to show you this or any other distirbution in the boxes or whiskers. Knowing this may help us not make any assumptions that we would have made just looking at the boxplot. Maybe the 50-75% isn't as spread out as we thought.
+#### Question 4
+When looking at scatter plots, you will be able to see if the the two variables are linearlly dependent of each other. They help to notice trends between the variables. Looking at the first scatterplot example, we can see a little linearity, especially if we just look after 60 years. 
+Scatter plots help us see outliers that ay mess up the linear regression. Also, linear regression assumes that the data is normal, which can be seen in scatterplots.
+
+#### Question 5
+I struggled to see the relationship between these variables. When the population gets high, the gdp is low. At the beginning, it sort of looks like there is a 45 degree angle or the gdp is increasing twice as fast as the pop. It's not perfect, though, as there are quite a few points off of that.
+
+#### Question 6
+The 3d boxplot make it easy to see that as the life expectancy goes up, the gdp does as well. We can also see there is a slight positive correlation between population and life expectancy. It's interesting to see that line apart from the rest. It follows the same thing with a postive correlation between life expectancy and population. It's hard to tell if the gdp is going up as well, but I think it is slightly. Overall, all the three variables are generally positively correlated.
+
+#### Question 7
+```{r}
+library(gapminder)
+library(ggplot2)
+ggplot(gapminder)+geom_histogram(aes(x=gdpPercap))
+```
+
+#### Question 8
+```{r}
+boxplot(gapminder$gdpPercap~gapminder$continent)
+```
+
+```{r}
+gap2 <- aggregate(gdpPercap ~ continent, gapminder, mean)
+names(gap2)[2] <- "gdpPercap_avg"
+barplot(gap2$gdpPercap_avg, names.arg = gap2$continent, xlab = "continent", ylab = "gdpPercap_avg")
+```
+
+```{r}
+gap90 <- gapminder[gapminder$year == 2007,]
+par(mar=c(5, 9, 5, 5)+0.1)
+x <- plot(gap90$gdpPercap, gap90$country,ylab = "")
+axis(2, at=gap90$country, labels = gap90$country, las=2)
+title(ylab="country",line=8)
+```
+
+```{r}
+gap90 <- gapminder[gapminder$year == 2007,]
+par(mar=c(5, 9, 5, 5)+0.1)
+plot(x=gap90$gdpPercap, y = reorder(gap90$country, gap90$gdpPercap),ylab = "")
+axis(2, at=gap90$country, labels = gap90$country, las=2)
+title(ylab="country",line=8)
+```
+
+```{r}
+stripchart(gap90$gdpPercap, ylab ="All", xlab = "gdoPercap")
+axis(2, at=gap90$gdpPercap, labels = NULL)
+```
+
+```{r}
+plot(gapminder$lifeExp, gapminder$gdpPercap, xlab = "lifeExp", ylab = "gdpPercap")
+```
+
+```{r}
+plot(gapminder$pop, gapminder$gdpPercap, xlab = "pop", ylab = "gdpPercap")
+```
+
+#### Question 9
+
+#####Scatter plot between LifeExp and Population
+```{r}
+plot(gapminder$lifeExp, gapminder$pop)
+```
+
+This plot shows that there is a very slight positive correlation between lifeExp and population. We saw ths a little bit in the 3d box, but since it is just two variables it is easier to see.
+
+
+#####Boxplot between lifeexp and continent
+```{r}
+boxplot(gapminder$lifeExp~gapminder$continent)
+```
+
+I chose this one because I was interested if there was a differnece. Not suppringly, Africa has a lower life expectancy than that of the other continents. We can see Europe and Oceania's middle 50% is quite condensed, although Europe has quite a few outliers while Oceaninia has none. Asia has the biggest spread, not only in terms of the middle 50% but the min and max as well.
