@@ -1,0 +1,61 @@
+---
+title: "HW5 Markdown"
+author: "Josh VandenBerg"
+date: "4/9/2020"
+output: html_document
+---
+Hiding Results
+```{r}
+knitr::opts_chunk$set(results = "hide")
+```
+### Question 1
+```{r}
+library(ggplot2)
+data("diamonds")
+ccfreq <- data.frame(xtabs(~ cut + color, diamonds))
+library(lattice)
+barchart(cut ~ Freq | color, ccfreq, as.table = TRUE)
+```
+
+In the graph on the lesson, the muddled names make it impossible to know which category is which. The graphic itself tells us that the categories on the right are mor frequent increasing quite a bit from the first to the last. In the new graph shown here, we can see which category is which. Instead of the graphic making it look like it's increasing, this one makes it look like the fair and good category are less than half frequent as ideal. This graph notices the small frequencies while the other one emphasized the large frequencies.
+
+### Question 2
+```{r}
+library(GGally)
+ggparcoord(iris, columns = c(3,1,4,2), groupColumn = 5)
+```
+
+While this new graph still shows the increase by setosa at sepal.width, I think it does a better job at showing the decrease of the other two variables at sepal.width. The graph in the lesson showed the drop, bt since it's last here it makes it feel more emphatic. This graph I think also makes setosa look lower in general until the end.
+
+### Question 3
+This a mosaic plot looking at continent and lifeExp versus how often it happens. I made lifeExp into a category variable with either high or low life expectancy.
+```{r}
+library(gapminder)
+gapminder$lifeexp[gapminder$lifeExp < 65] = "low"
+gapminder$lifeexp[gapminder$lifeExp >= 65] = "high"
+mosaicplot(~ continent + lifeexp, data = gapminder)
+```
+
+### Question 4
+A polar diagram is different than a pie chart in that all the variables have the same size wedges. The polar diagram also uses a variable to make it proportional. It's like a pie chart bar chart mix. All the pie chart does is to show the different percentages of each category in the data. In the example, they used the level of cut. Since each cut gets one level, the pie chart will show the proportion of the whole for each level of cut. Personally, I stil like the pie chart even though a lot of people don't like it. I have not used polar diagrams like at all, and I get quite confused loooking at them. I would just use a bar chart instead of a polar diagram.
+
+### Question 5
+I have also used group bar charts to present two categoricals with a numeric. In this graphic, it looks a little neater when one of the categories have two or three vairables. But you could still use it in the stacked barchart. For each color, you'd have five different bar charts for each level of cut. Since there are 7 colors, you would have 35 barcharts. I find this way easier to comparte the level of cut than looking at a stacked barchart.
+
+### Question 7
+The grouped barcharts are another way to show two categories and one quanatative variable. I like the grouped barcharts better as it is easier to me to see the difference.
+
+```{r}
+age <- c(rep("0-9",3),rep("10-19",3),rep("20-29",3),rep("30-39",3), rep("40-49",3), rep("50-59",3), rep("60-69",3), rep("70-79",3), rep("80+",3), rep("unknown",3))
+condition <- rep(c("Not-Hospitalized","Hospitalized","Deaths"),10)
+value <- c(c(53,6,0),c(105,4,0),c(732,34,1),c(833,88,2),c(756,130,7), c(811,221,13),c(594,236,20), c(323,201,52), c(188,122,98), c(25,0,0))
+covid <- data.frame(age,condition,value)
+
+ggplot(covid, aes(fill=condition, y=value, x=age))+geom_bar(position = position_dodge(),stat = "identity")+scale_fill_manual(values = c("black","gray45","gray"),guide_legend(reverse = TRUE))
+
+ggplot(covid, aes(fill=condition, y=value, x=age))+geom_bar(position = position_fill(reverse=TRUE),stat = "identity")+scale_fill_manual(values = c("black","gray45","gray"), guide_legend(reverse = TRUE))
+
+
+```
+
+
