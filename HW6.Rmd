@@ -1,0 +1,54 @@
+---
+title: "HW6"
+author: "Josh VandenBerg"
+date: "4/17/2020"
+output: html_document
+---
+Hiding Results
+```{r}
+#knitr::opts_chunk$set(results = "hide")
+```
+#### Question 1
+```{r}
+library(ggplot2)
+wins <- c(47,37,37,33,29,20)
+team <- c("Min","Cle","Mil","STL","Chi","Pitt")
+barplot(wins, names.arg = team, col = rainbow(6), xlab = "Team",ylab = "Wins")
+```
+
+```{r}
+homeruns <- c(455,630,1571,2128,3087,5693,6776)
+year <- c("1901","1920","1940","1960","1980","2000","2019")
+#avghr <- aggregate(homeruns~year,mean)
+cols <-  heat.colors(length(homeruns), rev = T)
+barplot(homeruns, names.arg = year, col = cols, xlab = "Year",ylab = "Homeruns")
+```
+
+```{r}
+standings <- data.frame(place = c("1st","2nd","3rd","4th","5th"), percent = c(26,22,7,19,26))
+rwb <- colorRampPalette(c("blue", "red"))
+pie(standings$percent, standings$place, col = rwb(5))
+```
+
+#### Question 2
+I think it's pretty common to use red as hot and blue as cold. In a weather forcast, if they flipped them it would cause a lot of confusion.
+
+#### Question 3
+The first thing I notice is that the lifeExp of the later years goes higher than 60. It makes it confusing since you don't know exactly how high it goes. The other thing that would make the graph better is changing the increments in the y axis. Smaller increments would be better because it would show the differences better. In this graph, a 10 year difference doesn't look that big while in fact it's a big deal.
+
+#### Question 4
+The relative graph makes the difference in lifeExp much more evident. Thus, if you were trying to prove a point, the realtive graph is much more convincing.
+The absolute graph, though, helps show the ratio between the different points. With bar charts, I like the absolute graph because it visually makes the graph look more accurate. 
+
+#### Question 5
+SVG's are design two-dimenstional vector and vector-raster graphics. It uses points, lines, curves, and other shapes. It looks good no matte the size or resolution.
+
+PNG's is a raster or bitmap image file format. It is made up of pixels to create the image. It cannot be enlarged without it becoming grainy.
+
+To save into these types, you just need to go to plots either to the top bar or next to the r console. If you go on the top bar, click save as image and then choose the type you want. If you go in the section next to the r console, you need to click export and then save as image and then choose the type you want.
+
+#### Question 6
+A color combination that color blind people stuggle with is red and green. They look very similar and then if you have shades or each color as well, it's basically impossible to tell. 
+
+#### Question 7
+The other factor to show dimension I've seen is the size of a dot for example. If there's more people at a certain data point, you'd put a bigger dot. I've also seen different shapes, but very rarely have I seen that. 
